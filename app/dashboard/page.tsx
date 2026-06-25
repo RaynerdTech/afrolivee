@@ -57,53 +57,54 @@ export default function DashboardPage() {
   }
 
   function playNewOrderSound() {
-    try {
-      const audioContext = createAudioContext();
-      if (!audioContext) return;
+  try {
+    const context = createAudioContext();
+    if (!context) return;
 
-      if (audioContext.state === "suspended") {
-        audioContext.resume();
-      }
-
-      const now = audioContext.currentTime;
-
-      function playTone(
-        frequency: number,
-        startTime: number,
-        duration: number,
-        volume = 0.38
-      ) {
-        const oscillator = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-
-        oscillator.type = "triangle";
-        oscillator.frequency.setValueAtTime(frequency, startTime);
-
-        gain.gain.setValueAtTime(0.0001, startTime);
-        gain.gain.exponentialRampToValueAtTime(volume, startTime + 0.025);
-        gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-
-        oscillator.connect(gain);
-        gain.connect(audioContext.destination);
-
-        oscillator.start(startTime);
-        oscillator.stop(startTime + duration + 0.05);
-      }
-
-      playTone(740, now, 0.22, 0.42);
-      playTone(980, now + 0.16, 0.25, 0.45);
-      playTone(1240, now + 0.34, 0.32, 0.5);
-
-      playTone(980, now + 0.75, 0.2, 0.38);
-      playTone(1240, now + 0.9, 0.28, 0.44);
-
-      if ("vibrate" in navigator) {
-        navigator.vibrate([180, 80, 180]);
-      }
-    } catch {
-      // Silent fallback.
+    if (context.state === "suspended") {
+      context.resume();
     }
+
+    const audioContext: AudioContext = context;
+    const now = audioContext.currentTime;
+
+    function playTone(
+      frequency: number,
+      startTime: number,
+      duration: number,
+      volume = 0.38
+    ) {
+      const oscillator = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+
+      oscillator.type = "triangle";
+      oscillator.frequency.setValueAtTime(frequency, startTime);
+
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(volume, startTime + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+
+      oscillator.connect(gain);
+      gain.connect(audioContext.destination);
+
+      oscillator.start(startTime);
+      oscillator.stop(startTime + duration + 0.05);
+    }
+
+    playTone(740, now, 0.22, 0.42);
+    playTone(980, now + 0.16, 0.25, 0.45);
+    playTone(1240, now + 0.34, 0.32, 0.5);
+
+    playTone(980, now + 0.75, 0.2, 0.38);
+    playTone(1240, now + 0.9, 0.28, 0.44);
+
+    if ("vibrate" in navigator) {
+      navigator.vibrate([180, 80, 180]);
+    }
+  } catch {
+    // Silent fallback.
   }
+}
 
   function showNewOrderNotification(order: Order) {
     if (!("Notification" in window)) return;
